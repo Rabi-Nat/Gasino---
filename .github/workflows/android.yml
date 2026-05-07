@@ -32,7 +32,7 @@ jobs:
         run: |
           cd android
           rm -f gradle/wrapper/gradle-wrapper.jar
-          curl -L https://raw.githubusercontent.com/gradle/gradle/v8.14.0/gradle/wrapper/gradle-wrapper.jar --output gradle/wrapper/gradle-wrapper.jar
+          curl -L https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradle/wrapper/gradle-wrapper.jar --output gradle/wrapper/gradle-wrapper.jar
           chmod +x gradlew
 
       - name: Build APK

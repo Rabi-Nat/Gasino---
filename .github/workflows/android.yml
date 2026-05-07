@@ -2,19 +2,16 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -22,11 +19,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build web app
+      - name: Build web
         run: npm run build
-
-      - name: Sync Capacitor
-        run: npx cap sync android
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -34,14 +28,23 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Capacitor Sync
+        run: npx cap sync android
+
+      - name: Fix Gradle Wrapper
+        run: |
+          cd android
+          rm -f gradle/wrapper/gradle-wrapper.jar
+          wget https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar -O gradle/wrapper/gradle-wrapper.jar
+          chmod +x gradlew
+
       - name: Build APK
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
+          name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
